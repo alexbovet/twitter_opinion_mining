@@ -102,5 +102,23 @@ ENV/
 
 # pickle files
 *.pickle
+*.pckl
+*.mmap
+
+# graphml
+*.graphml
+
+# JSON files
+*.json
+
+# SQLite
+*.sqlite
+*.sql
+
+# tweet files
+*.taj
+*.arx
+
+
 
 
