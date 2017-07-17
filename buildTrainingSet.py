@@ -200,11 +200,5 @@ class buildTrainingSet(DS):
         joblib.dump(X, features_vect_file)
         joblib.dump(y, labels_vect_file)
 
-        self.repportBack(0,0,{'sqlite_db_filename': sqlite_file,
-                              'features_pickle_file': features_pickle_file,
-                              'labels_pickle_file': labels_pickle_file,
-                              'features_vect_file': features_vect_file,
-                              'labels_vect_file': labels_vect_file},'','')
-
         
      

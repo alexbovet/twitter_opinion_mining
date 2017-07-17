@@ -147,8 +147,7 @@ class analyzeProbaDF(DS):
                                 "\nNumber of users per day in each camp:\n"+\
                                 df_num_users.to_string()
         
-        self.repportBack(0,0,self.string_results,'','')
-
+        print(self.string_results)
         
             
             

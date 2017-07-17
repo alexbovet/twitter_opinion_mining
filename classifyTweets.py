@@ -132,7 +132,6 @@ class classifyTweets(DS):
             print(time.time() - t0)
 
 
-        self.repportBack(0,0,self.job['sqlite_db_filename'],'','')
 
         
             

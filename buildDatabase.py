@@ -172,8 +172,4 @@ class buildDatabse(DS):
                 print('time ' + "{:.6}".format(time.time()-t2) + 's')
         
     
-        # not sure if necesary
-        conn.close()
-        
-        self.repportBack(0,0,{'sqlite_db_filename': sqlite_db_filename},'','')
-        
+

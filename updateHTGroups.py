@@ -56,5 +56,4 @@ class updateHTGroups(DS):
                               create_column=create_column, create_index=create_index,
                               column_name=column_name)
 
-        self.repportBack(0,0,'','','')
-        
+

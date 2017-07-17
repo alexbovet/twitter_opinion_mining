@@ -66,7 +66,6 @@ class selectHashtags(DS):
             htgs_lists.append(ht_list)
 
         
-        # return the lists of hashtags
-        self.repportBack(0,0,{'htgs_lists': htgs_lists},'','')
+
         
         

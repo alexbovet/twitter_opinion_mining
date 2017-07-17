@@ -105,9 +105,7 @@ class crossValOptimize(DS):
         # save best params to JSON file
         with open(best_params_file, 'w') as fopen:
         	json.dump(self.best_parameters, fopen)
-        
-            	
-        self.repportBack(0,0,self.best_parameters,'','')
+
 
         
             

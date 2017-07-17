@@ -34,9 +34,7 @@ class addStatSigniHT(DS):
 
         # save graph file
         G.save(graph_file, fmt='graphml')
-        
-        self.repportBack(0,0,{'graph_file': graph_file},'','')
-        
+                
         
         
         

@@ -83,6 +83,5 @@ class propagateLabels(DS):
         print('saving results')
         df_prop.to_pickle(propag_results_filename)
         
-        self.repportBack(0,0,{'propag_results_filename': propag_results_filename},'','')
         
         

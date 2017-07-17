@@ -40,7 +40,5 @@ class selectInitialHashtags(DS):
             print(str(i) + ' :' + str(hnc))
                                    
         
-        # return the lists of hashtags
-        self.repportBack(0,0,{'top_hashtags': ht_names_counts[:num_top_htgs]},'','')
         
         

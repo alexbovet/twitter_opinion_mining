@@ -94,7 +94,6 @@ class trainClassifier(DS):
         
         joblib.dump(to_dump, classifier_filename)
         
-        self.repportBack(0,0,{'classifier_filename' : classifier_filename},'','')
 
         
             
