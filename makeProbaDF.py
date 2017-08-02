@@ -11,7 +11,7 @@ class makeProbaDF(DS):
     """ prepare a pandas dataframe with the classification probability, tweet_id and user_id
         for each tweets.
         - Use the probability of the original tweets for retweets
-        - Set the probability of tweets to labeled hashtags to 0 or 1
+        - Set the probability of tweets with labeled hashtags to 0 or 1
         - Filter out tweets sent from unofficial Twitter clients
     """
     

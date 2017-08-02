@@ -13,21 +13,52 @@ from makeProbaDF import makeProbaDF
 from analyzeProbaDF import analyzeProbaDF
 
 
+# =============================================================================
+# Define filenames and directories for current job
+# =============================================================================
+# list of directories containing the tweet archive files (TAJ)
 tweet_archive_dirs = ['etrade']
+
+# SQLite database that will be created
 sqlite_file = 'test.sqlite'
+
+# hashtag co-occurrence graph that will be created
 graph_file = 'graph_file.graphml'
 
+# pickle files where the training set features will be saved
 features_pickle_file = 'features.pickle'
+
+# pickle file where the training set labels will be saved
 labels_pickle_file = 'labels.pickle'
+
+# vectorized features file
 features_vect_file = 'features.mmap'
+
+# vectorized labels file
 labels_vect_file = 'labels.mmap'
+
+# mapping between labels names and numbers
 labels_mappers_file = 'labels_mappers.pickle'
-classifier_filename = 'classifier.pickle'
-propag_results_filename = 'propag_results.pickle'
-df_proba_filename = 'df_proba.pickle'
-df_num_tweets_filename = 'df_num_tweets.pickle'
-df_num_users_filename = 'df_num_users.pickle'
+
+# JSON file with the classifier best parameters obtained from cross-validation
 best_params_file = 'best_params.json'
+
+# where the trained calssifier will be saved
+classifier_filename = 'classifier.pickle'
+
+# DataFrame with the results of the label propagation
+# on the hashtag network
+propag_results_filename = 'propag_results.pickle'
+
+# DataFrame with the classification probability of
+# every tweets in the database
+df_proba_filename = 'df_proba.pickle'
+
+# DataFrame with the number of tweets in each camp per day
+df_num_tweets_filename = 'df_num_tweets.pickle'
+
+# DataFrame with the number of users in each camp per day
+df_num_users_filename = 'df_num_users.pickle'
 
 
 job = {'tweet_archive_dirs': tweet_archive_dirs,
@@ -46,29 +77,30 @@ job = {'tweet_archive_dirs': tweet_archive_dirs,
        'best_params_file' : best_params_file
        }
 
+raise Exception
+
 #%% build database
 
 bDB = buildDatabse(job)
 
-r = bDB.run()
+bDB.run()
 
 #%% make HT network
 
-mHTn = makeHTNetwork(job)
+makeHTNetwork(job).run()
 
-mHTn.run()
 
 #%% add significance value to edges
 
-aSSHT = addStatSigniHT(job)
+addStatSigniHT(job).run()
 
-aSSHT.run()
 
 #%% select initial hashtags
        
-sIHT = selectInitialHashtags(job)
-       
-sIHT.run()
+# this will display the top occuring hashtags
+selectInitialHashtags(job).run()
+
+# select the seeds you want to use for the label propagation
 # user input
 initial_htgs_lists = [['money'],
                       ['401k']]
@@ -78,15 +110,22 @@ initial_htgs_lists = [['money'],
 # start loop
 job['initial_htgs_lists'] = initial_htgs_lists
        
-pL = propagateLabels(job)
+propagateLabels(job).run()
 
-pL.run()
 
 #%% select hashtags
-        
-sHT = selectHashtags(job)
 
-sHT.run()
+# outputs a list of possible hashtgs to add in ech camp satisfying 
+# with
+# count (= total number of occurrences),
+# label_init (= initial label before propagation, -1 means no initial labels)
+# vertex_id  (= ID of the vertex in the hashtag graph)
+# label_sum1 (= number of neighbors with label 1)
+# signi_sum1 (= sum of the significance of edges with neighbors having label 1)
+# label_sum2 (= number of neighbors with label 2)
+# signi_sum2 (= sum of the significance of edges with neighbors having label 2)
+selectHashtags(job).run()
+
 
 # lists of list of new hashtags (including initial hashtags)
 htgs_lists = [['money', 'stocks', 'stockmarket', 'cash', 'market', 'ameritrade', 'scottrade'],
@@ -98,48 +137,36 @@ htgs_lists = [['money', 'stocks', 'stockmarket', 'cash', 'market', 'ameritrade',
 
 job['htgs_lists'] = htgs_lists
        
-uHTG = updateHTGroups(job)
+updateHTGroups(job).run()
                
-uHTG.run()
 
 #%% build training set
 
-       
-bTS = buildTrainingSet(job)
+buildTrainingSet(job).run()
                
-bTS.run()
 
 #%% optimize
 job['n_iter'] = 2
        
-CV = crossValOptimize(job)
+crossValOptimize(job).run()
                
-CV.run()
 
 
 #%% train classifier
 
+trainClassifier(job).run()
 
-tC = trainClassifier(job)
-
-tC.run()
 
 #%% classify tweets
 
-CT = classifyTweets(job)
+classifyTweets(job).run()
 
-CT.run() 
 #%% make classification proba dataframe
        
-mPDF = makeProbaDF(job)
+makeProbaDF(job).run()
 
-mPDF.run() 
 
 #%% analyze classification proba 
        
-aPDF = analyzeProbaDF(job)
-
-aPDF.run()
-
-print(aPDF.string_results)
+analyzeProbaDF(job).run()
 

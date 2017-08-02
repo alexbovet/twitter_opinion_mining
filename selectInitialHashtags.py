@@ -36,6 +36,9 @@ class selectInitialHashtags(DS):
         ht_names_counts = sorted([(str(htn), int(htc)) for htn, htc in zip(ht_names, counts)],
                                   key=lambda x:x[1], reverse=True)
         
+        print(" Top " + str(num_top_htgs) + " occuring hashtags:")
+        print("* rank: (name: frequency)")
+        
         for i,hnc in enumerate(ht_names_counts[:num_top_htgs]):
             print(str(i) + ' :' + str(hnc))
                                    
