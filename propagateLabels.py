@@ -4,9 +4,9 @@ import graph_tool.all as gt
 import numpy as np
 from HTCoocNetwork import propagates_labels, find_vertices_from_hashtags
 
-from ds import DS
+from baseModule import baseModule
 
-class propagateLabels(DS):
+class propagateLabels(baseModule):
     """ propagate the labels to neighbors
     """    
     
@@ -18,7 +18,7 @@ class propagateLabels(DS):
         graph_file = self.job['graph_file']
         
         # list of lists with hashtags belonging to each camp
-        initial_htgs_lists = self.job['initial_htgs_lists']
+        initial_htgs_lists = self.job['htgs_lists']
         
         # results filename        
         propag_results_filename = self.job['propag_results_filename']

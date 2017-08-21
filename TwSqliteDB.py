@@ -1050,7 +1050,7 @@ def addHTSupportGroup(db_connection, ht_group_names, ht_list_lists,
         
     # create index
     if create_index:
-        c.execute('CREATE INDEX {cname}_supp_index ON hashtag_tweet_user ({cname})'.format(cname=column_name))
+        c.execute('CREATE INDEX IF NOT EXISTS {cname}_supp_index ON hashtag_tweet_user ({cname})'.format(cname=column_name))
 
     db_connection.commit()
     

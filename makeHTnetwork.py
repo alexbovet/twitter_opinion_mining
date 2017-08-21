@@ -8,9 +8,9 @@ import pandas as pd
 from itertools import combinations
 from collections import Counter
 
-from ds import DS
+from baseModule import baseModule
 
-class makeHTNetwork(DS):
+class makeHTNetwork(baseModule):
     """ build a HT coocurence network
     """    
     
@@ -52,7 +52,7 @@ class makeHTNetwork(DS):
             with sqlite3.connect(sqlite_file, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES) as conn:
                 
                 df = pd.read_sql_query("""SELECT hashtag, tweet_id FROM hashtag_tweet_user""", 
-                                        conn)                                           
+                                        conn)                                  
                                    
   
         
@@ -69,8 +69,9 @@ class makeHTNetwork(DS):
         ht_pair_count = Counter(edges)
         
 
-        edges_list_weigths = np.array([(ht1, ht2, w) for (ht1, ht2), w in ht_pair_count.items() if w >=weight_threshold])
-        print(time.time()-t0)
+        edges_list_weigths = np.array([(ht1, ht2, w) for (ht1, ht2),
+                                       w in ht_pair_count.items() if w >=weight_threshold])
+        self.print_elapsed_time(t0)
         
         print('creating graph')
         t0 = time.time()
@@ -78,7 +79,8 @@ class makeHTNetwork(DS):
         
         e_weights = G.new_edge_property('int') 
         
-        G.vp['names'] = G.add_edge_list(edges_list_weigths, hashed=True, string_vals=True, eprops=e_weights)
+        G.vp['names'] = G.add_edge_list(edges_list_weigths, hashed=True, 
+                                            string_vals=True, eprops=e_weights)
         
         e_weights.a = edges_list_weigths[:,2]
         
@@ -95,7 +97,7 @@ class makeHTNetwork(DS):
         G.graph_properties['weight_threshold'] = G.new_graph_property('int')
         G.graph_properties['weight_threshold'] = weight_threshold
         
-        print(time.time()-t0)
+        self.print_elapsed_time(t0)
         
         
         #% ht counts
@@ -113,7 +115,8 @@ class makeHTNetwork(DS):
         v_counts = G.new_vertex_property('int', val=0)
         ht_counts_names = np.array(df_ht_counts.hashtag.tolist())
         sorter = np.argsort(ht_counts_names)
-        v_counts.a = df_ht_counts.iloc[sorter[np.searchsorted(ht_counts_names, ht_names, sorter=sorter)]]['count']
+        v_counts.a = df_ht_counts.iloc[sorter[np.searchsorted(ht_counts_names, 
+                                             ht_names, sorter=sorter)]]['count']
         G.vp['counts'] = v_counts
         
         # save graph file

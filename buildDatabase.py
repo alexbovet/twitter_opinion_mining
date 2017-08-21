@@ -7,9 +7,9 @@ from TwSqliteDB import updateSqliteTables, createIndexes
 import sqlite3
 
 
-from ds import DS
+from baseModule import baseModule
 
-class buildDatabse(DS):
+class buildDatabse(baseModule):
     """ used to build a new sqlite database or update an existing one
     """
     

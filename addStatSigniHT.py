@@ -4,9 +4,9 @@ import graph_tool.all as gt
 import time
 from HTCoocNetwork import add_p_val_to_edges
 
-from ds import DS
+from baseModule import baseModule
 
-class addStatSigniHT(DS):
+class addStatSigniHT(baseModule):
     """ add statistical significance to hashtag coocurence network
     """    
     
@@ -30,8 +30,8 @@ class addStatSigniHT(DS):
         print('computing significance of links')
         add_p_val_to_edges(G, G.gp.Ntweets, ncpu=ncpu)
         print('finished')
-        print(time.time()-t0)
-
+        self.print_elapsed_time(t0)
+        
         # save graph file
         G.save(graph_file, fmt='graphml')
                 

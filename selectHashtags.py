@@ -3,9 +3,9 @@ __author__ = "Alexandre Bovet"
 import numpy as np
 import pandas as pd
 
-from ds import DS
+from baseModule import baseModule
 
-class selectHashtags(DS):
+class selectHashtags(baseModule):
     """ filter the hashtags according to occurences and label propagations
         
         Loads the results of labelPropagation and returns a list of hashtags lists
@@ -38,32 +38,36 @@ class selectHashtags(DS):
         
         signi_cols = [col for col in df_prop.columns if col[:5] == 'signi']
         
-        # list of lists with the selected hashtags
-        htgs_lists = []
+#        # list of lists with the selected hashtags
+#        htgs_lists = []
         for camp in camps:
             # find htgs where signi_sum_i > sum_(j!=i) signi_sum_j and that are new
-            mask = np.logical_and(2*df_prop['signi_sum' + str(camp)] > df_prop[signi_cols].sum(axis=1),
-                                  df_prop.label_init == -1)
+#            mask = np.logical_and(2*df_prop['signi_sum' + str(camp)] > df_prop[signi_cols].sum(axis=1),
+#                                  df_prop.label_init == -1)
+            
+            # find htgs where signi_sum_i > sum_(j!=i) signi_sum_j
+            mask = 2*df_prop['signi_sum' + str(camp)] > df_prop[signi_cols].sum(axis=1)
+
                                   
             
             print('\n +++ hashtags in camp ' + str(camp))
             print(df_prop.loc[mask].sort_values('count',
                                     ascending=False).head(num_top_htgs))
             
-            #########################
-            # Here is where user should select which hashtags he wants to keep
-            # or remove
-            #########################
-            
-            # no selections, just take all of them
-            
-            # old htgs
-            ht_list = df_prop.loc[df_prop.label_init == camp]['name'].tolist()
-            # + new htgs
-            ht_list.extend(df_prop.loc[mask].sort_values('count',
-                                      ascending=False)['name'].head(num_top_htgs).tolist())
-            
-            htgs_lists.append(ht_list)
+#            #########################
+#            # Here is where user should select which hashtags he wants to keep
+#            # or remove
+#            #########################
+#            
+#            # no selections, just take all of them
+#            
+#            # old htgs
+#            ht_list = df_prop.loc[df_prop.label_init == camp]['name'].tolist()
+#            # + new htgs
+#            ht_list.extend(df_prop.loc[mask].sort_values('count',
+#                                      ascending=False)['name'].head(num_top_htgs).tolist())
+#            
+#            htgs_lists.append(ht_list)
 
         
 

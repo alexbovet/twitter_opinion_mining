@@ -2,9 +2,9 @@ __author__ = "Alexandre Bovet"
 
 import graph_tool.all as gt
 
-from ds import DS
+from baseModule import baseModule
 
-class selectInitialHashtags(DS):
+class selectInitialHashtags(baseModule):
     """ Select the initial set of hashtags
         
     """    
