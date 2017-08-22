@@ -5,9 +5,9 @@ import pandas as pd
 import time
 from TwSentiment import official_twitter_clients
 
-from ds import DS
+from baseModule import baseModule
 
-class makeProbaDF(DS):
+class makeProbaDF(baseModule):
     """ prepare a pandas dataframe with the classification probability, tweet_id and user_id
         for each tweets.
         - Use the probability of the original tweets for retweets
@@ -26,21 +26,26 @@ class makeProbaDF(DS):
         #==============================================================================
         # OPTIONAL PARAMETERS
         #==============================================================================
-        # whether to use only tweets from official clients        
-        USE_OFFICIAL_CLIENTS = self.job.get('USE_OFFICIAL_CLIENTS',True)
+        # whether to use only tweets from official clients
+        USE_OFFICIAL_CLIENTS = self.job.get('use_official_clients',True)
         
         propa_col_name = self.job.get('propa_col_name','p_1')
         ht_group_col_name = self.job.get('column_name_ht_group', 'ht_class')
+        # name suffix of the table with the classification probabilities
+        propa_table_name_suffix = self.job.get('propa_table_name_suffix', '')
         
         ######
         # define sql queries
         #####
 
         class_proba_db_alias = 'main'
+        class_proba_table_name = 'class_proba' + propa_table_name_suffix
+        retweet_class_proba_table_name = 'retweet_class_proba' + propa_table_name_suffix
             
-        sql_query = """SELECT tweet.datetime_EST, tweet.tweet_id, tweet.user_id, {cpdb}.class_proba.{pcolname} 
-                       FROM tweet INNER JOIN {cpdb}.class_proba USING (tweet_id)""".format(cpdb=class_proba_db_alias,
-                                                                                       pcolname=propa_col_name)
+        sql_query = """SELECT tweet.datetime_EST, tweet.tweet_id, tweet.user_id, {cpdb}.{cptb}.{pcolname} 
+                       FROM tweet INNER JOIN {cpdb}.{cptb} USING (tweet_id)""".format(cpdb=class_proba_db_alias,
+                                                                                      cptb=class_proba_table_name,
+                                                                                      pcolname=propa_col_name)
                        
         params=None
         
@@ -59,17 +64,19 @@ class makeProbaDF(DS):
         
         # for retweets
         sql_query_original_retweets = """SELECT retweeted_status.datetime_EST, retweeted_status.tweet_id,
-                              retweeted_status.user_id, {cpdb}.retweet_class_proba.{pcolname}
-                       FROM retweeted_status INNER JOIN {cpdb}.retweet_class_proba USING (tweet_id)""".format(cpdb=class_proba_db_alias,
-                                                                                                               pcolname=propa_col_name)
+                              retweeted_status.user_id, {cpdb}.{rcptb}.{pcolname}
+                       FROM retweeted_status INNER JOIN {cpdb}.{rcptb} USING (tweet_id)""".format(cpdb=class_proba_db_alias,
+                                                                                            rcptb=retweet_class_proba_table_name,
+                                                                                            pcolname=propa_col_name)
         
         sql_query_retweets = """SELECT tweet.datetime_EST, tweet.tweet_id,
-                              tweet.user_id, {cpdb}.class_proba.{pcolname},
+                              tweet.user_id, {cpdb}.{cptb}.{pcolname},
                               tweet_to_retweeted_uid.retweet_id
                        FROM tweet_to_retweeted_uid
                            INNER JOIN tweet USING (tweet_id)
-                           INNER JOIN {cpdb}.class_proba USING (tweet_id)""".format(cpdb=class_proba_db_alias,
-                                                                                   pcolname=propa_col_name)
+                           INNER JOIN {cpdb}.{cptb} USING (tweet_id)""".format(cpdb=class_proba_db_alias,
+                                                                               cptb=class_proba_table_name,
+                                                                               pcolname=propa_col_name)
         
         
         # select tweets with labeled hashtags
@@ -106,23 +113,25 @@ class makeProbaDF(DS):
                 
             print('creating df_proba_original_rt')
             df_proba_original_rt = pd.read_sql(sql_query_original_retweets, conn)
-            print(time.time() - t0)
+            self.print_elapsed_time(t0)
             
             print('creating df_proba_rt')
             df_proba_rt = pd.read_sql(sql_query_retweets, conn)
-            print(time.time() - t0)
+            self.print_elapsed_time(t0)
             
             print('creating df_proba_ht_pro_0')
             df_proba_ht_pro_0 = pd.read_sql(sql_query_hashtag, conn, params=sorted(label_names))
-            print(time.time() - t0)
+            self.print_elapsed_time(t0)
             
             print('creating df_proba_ht_pro_1')
             df_proba_ht_pro_1 = pd.read_sql(sql_query_hashtag, conn, params=sorted(label_names, reverse=True))
-            print(time.time() - t0)
+            self.print_elapsed_time(t0)
         
                                                       
 
         #%% correct probabilites for retweets  
+        # disable warning 
+        pd.options.mode.chained_assignment = None
         
         df_proba_rt.rename(columns={propa_col_name: 'proba_retweet'}, inplace=True)
         
@@ -150,10 +159,10 @@ class makeProbaDF(DS):
         df_proba_all.loc[df_proba_all.tweet_id.isin(df_proba_ht_pro_0.tweet_id), propa_col_name] = 0.0
 
         #save                             
-        print('saving corrected df_proba')
+        print('saving corrected dataframe')
         df_proba_all.to_pickle(df_proba_filename)
         print('done')
-        print(time.time()-t0)
+        self.print_elapsed_time(t0)
                          
 
         

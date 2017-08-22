@@ -9,10 +9,11 @@ from sklearn.externals import joblib
 import time
 import numpy as np
 import ujson as json
+from multiprocessing import cpu_count
 
-from ds import DS
+from baseModule import baseModule
 
-class crossValOptimize(DS):
+class crossValOptimize(baseModule):
     """ optimize classifier hyper parameters
         
     """
@@ -34,9 +35,9 @@ class crossValOptimize(DS):
         # OPTIONAL PARAMETERS
         #==============================================================================
         # parameters
-        ncpu = self.job.get('ncpu', 6)
+        ncpu = self.job.get('ncpu', cpu_count()-1)
         # score to optimize
-        auto_scoring = self.job.get('auto_scoring', 'f1_micro')
+        scoring = self.job.get('scoring', 'f1_micro')
         
         # number of folds for the cross val
         n_splits = self.job.get('n_splits', 10)
@@ -57,13 +58,26 @@ class crossValOptimize(DS):
         
         verbose = self.job.get('CV_verbose', 1)
         
+        # wether to undersample the majority class or to adjust class_weights        
+        undersample_maj_class = self.job.get('undersample_maj_class', True)
+        
+        if undersample_maj_class:
+            # no need to adjust class weights since classes are balanced by
+            # undersampling majority class
+            class_weight=None
+        else:
+            # adjust class weights to balance classes
+            class_weight='balanced'
+        
+        
         
         
         # classifier pipeline
-        pipeline_list = [('classifier', SGDClassifier( verbose=verbose, 
+        pipeline_list = [('classifier', SGDClassifier(verbose=verbose, 
                                                       loss=loss,
                                                       n_iter=n_iter,
-                                                      penalty=penalty))]
+                                                      penalty=penalty,
+                                                      class_weight=class_weight))]
                   
         pipeline = Pipeline(pipeline_list)
     
@@ -73,7 +87,7 @@ class crossValOptimize(DS):
         # Auto Grid Search
         #
         grid_search = GridSearchCV(estimator=pipeline, param_grid=grid_search_parameters, cv=kfold,
-                                   scoring=auto_scoring, verbose=0 , n_jobs=ncpu)
+                                   scoring=scoring, verbose=0 , n_jobs=ncpu)
         
         print("\nPerforming grid search...")
         print("pipeline:", [name for name, _ in pipeline.steps])
@@ -82,7 +96,7 @@ class crossValOptimize(DS):
         t0 = time.time()
         grid_search.fit(X, y)
         
-        print("done in %0.3fs" % (time.time() - t0))
+        self.print_elapsed_time(t0)
     
         print("\nBest score: %0.3f" % grid_search.best_score_)
         print("Best parameters set:")
@@ -90,7 +104,8 @@ class crossValOptimize(DS):
         
         # prepare dictionary with best parameters default values
         self.best_parameters = {'classifier__loss': loss, 'classifier__penalty': penalty,
-        						'classifier__n_iter': n_iter, 'classifier__alpha': 0.01}
+        						'classifier__n_iter': n_iter, 'classifier__alpha': 0.01,
+                              'classifier__class_weight' : class_weight}
         
         # update and print best parameters
         for param_name in sorted(grid_search_parameters.keys()):
@@ -98,13 +113,13 @@ class crossValOptimize(DS):
             
             # convert numpy dtypes to python types
             if hasattr(best_parameters_np[param_name], 'item'):
-            	self.best_parameters[param_name] = best_parameters_np[param_name].item()
+                self.best_parameters[param_name] = best_parameters_np[param_name].item()
             else:
-            	self.best_parameters[param_name] = best_parameters_np[param_name]
+                self.best_parameters[param_name] = best_parameters_np[param_name]
             	
         # save best params to JSON file
         with open(best_params_file, 'w') as fopen:
-        	json.dump(self.best_parameters, fopen)
+            json.dump(self.best_parameters, fopen)
 
 
         

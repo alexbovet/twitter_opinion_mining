@@ -14,9 +14,9 @@ import pandas as pd
 from TwSentiment import official_twitter_clients
 
 
-from ds import DS
+from baseModule import baseModule
 
-class buildTrainingSet(DS):
+class buildTrainingSet(baseModule):
     """ build Training Set from sqlite db using hashtag labels 
         
     """
@@ -40,6 +40,12 @@ class buildTrainingSet(DS):
         # OPTIONAL PARAMETERS
         #==============================================================================        
         column_name = self.job.get('column_name_ht_group', 'ht_class')
+        
+        # whether to undersample the majority class in order to balanced
+        # the training set. Default is True, if False, unbalanced training
+        # set will be used and class weight adjusted accrodingly during
+        # training(http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html)
+        undersample_maj_class = self.job.get('undersample_maj_class', True)
         
         #find label names
         with sqlite3.connect(sqlite_file, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES) as conn:
@@ -91,7 +97,8 @@ class buildTrainingSet(DS):
             
             # fist camp
             c.execute(sql_query, values_0)
-            
+                
+            # make sure there no Retweets
             tweet_texts_pro_1 = [t for (t,) in c.fetchall() if t[:2] != 'RT']
                                      
             #get hashtags
@@ -117,23 +124,28 @@ class buildTrainingSet(DS):
         #%% balance set
         print('Num tweets 1: ' + str(len(tweet_texts_pro_1)))
         print('Num tweets 2: ' + str(len(tweet_texts_pro_2)))
-                       
-        num_tweets = min( len(tweet_texts_pro_1), len(tweet_texts_pro_2))
+        
+        if undersample_maj_class:
+            print('Balancing sets by undersampling the majority class')                       
+            num_tweets = min( len(tweet_texts_pro_1), len(tweet_texts_pro_2))
         
         
-        # sub sample pro_trump
-        random.seed(19)
-        
-        tweet_texts_pro_1_sample = random.sample(tweet_texts_pro_1, num_tweets)
-        tweet_texts_pro_2_sample = random.sample(tweet_texts_pro_2, num_tweets)
-        
+            # sub sample pro_trump
+            random.seed(19)
+            
+            tweet_texts_pro_1_sample = random.sample(tweet_texts_pro_1, num_tweets)
+            tweet_texts_pro_2_sample = random.sample(tweet_texts_pro_2, num_tweets)
+            
+        else:
+            tweet_texts_pro_1_sample = tweet_texts_pro_1
+            tweet_texts_pro_2_sample = tweet_texts_pro_2
+            
         feats_dict_list = [{'label': label_0, 'text': text} for text in tweet_texts_pro_1_sample]
         feats_dict_list.extend([{'label': label_1, 'text': text} for text in tweet_texts_pro_2_sample])
         
         df = pd.DataFrame.from_dict(feats_dict_list)
         
 
-        
         #%% features extraction
         
         all_hashtags = []
@@ -190,7 +202,7 @@ class buildTrainingSet(DS):
         vect = DictVectorizer(dtype=np.int8, sparse=True, sort=False)
         X = vect.fit_transform(features)
         
-        print('\nfinished in ' + "{:.4}".format(time.time()-t) + 's')
+        self.print_elapsed_time(t)
         
         print('Num samples x Num features')
         print(X.shape)

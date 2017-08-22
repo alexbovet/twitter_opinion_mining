@@ -5,16 +5,15 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.externals import joblib
 from sklearn.feature_extraction import DictVectorizer
-import sqlite3
 import pickle
 
 import time
 import numpy as np
 import ujson as json
 
-from ds import DS
+from baseModule import baseModule
 
-class trainClassifier(DS):
+class trainClassifier(baseModule):
     """ train classifier
         
     """
@@ -32,7 +31,7 @@ class trainClassifier(DS):
         
         # load best parameters from crossval
         with open(best_params_file, 'r') as fopen:
-        	best_parameters = json.load(fopen)
+            best_parameters = json.load(fopen)
         
         # set classifier parameters
         # loss function (log = logistic regression)
@@ -44,6 +43,9 @@ class trainClassifier(DS):
         # regularization strength
         alpha = best_parameters.get('classifier__alpha', 0.1)
         
+        # class weight (if training set is not balanced)
+        class_weight = best_parameters.get('classifier__class_weight', None)
+        
         
         # number of iterations of the stochastic gradient descent
         # SGD should see aounrd 1e6 samples
@@ -54,9 +56,16 @@ class trainClassifier(DS):
                                    alpha=alpha,
                                    n_iter=n_iter,
                                    penalty=penalty,
+                                   class_weight=class_weight,
                                    shuffle=True,
                                    random_state=42))]
         
+        print('Training classifier with the following parameters:')
+        print('    loss         = ' + str(loss))
+        print('    alpha        = ' + str(alpha))
+        print('    n_iter       = ' + str(n_iter))
+        print('    penalty      = ' + str(penalty))
+        print('    class_weight = ' + str(class_weight) +'\n')
                   
         pipeline = Pipeline(pipeline_list)
 
@@ -86,7 +95,7 @@ class trainClassifier(DS):
         
         pipeline.fit(features, y)
         
-        print(time.time()-t0) 
+        self.print_elapsed_time(t0) 
                                                      
         to_dump = {'sklearn_pipeline' : pipeline,
                    'label_mapper' : label_mapper,

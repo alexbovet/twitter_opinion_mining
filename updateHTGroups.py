@@ -3,6 +3,7 @@ __author__ = "Alexandre Bovet"
 
 import sqlite3
 from TwSqliteDB import addHTSupportGroup
+import time
 
 from baseModule import baseModule
 
@@ -26,19 +27,25 @@ class updateHTGroups(baseModule):
         #==============================================================================        
         column_name = self.job.get('column_name_ht_group', 'ht_class')
         
-        create_column = self.job.get('create_column_ht_group', True)
-        create_index = self.job.get('create_index_ht_group', True)        
+#        create_column = self.job.get('create_column_ht_group', True)
+#        create_index = self.job.get('create_index_ht_group', True)
         
+        # create column unless it already exists
+        create_column = True
+        create_index = True
+        
+        t0 = time.time()
         # labels of each class
         ht_group_names = [str(i) for i, _ in enumerate(ht_list_lists)]
                           
-        # check is column already exists
+        # check if column already exists
         with sqlite3.connect(sqlite_file, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES) as conn:
             c = conn.cursor()
             c.execute("PRAGMA table_info(hashtag_tweet_user)")
             cnames = c.fetchall()
             
         if column_name in [cname for _, cname, _, _, _ ,_ in cnames]:
+            print('column ' + str(column_name) + ' already exists, column values will be replaced.')
             create_column = False
             # set all column values to NULL
             with sqlite3.connect(sqlite_file, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES) as conn:
@@ -55,5 +62,8 @@ class updateHTGroups(baseModule):
             addHTSupportGroup(conn, ht_group_names, ht_list_lists,
                               create_column=create_column, create_index=create_index,
                               column_name=column_name)
+            
+            
+        self.print_elapsed_time(t0)
 
 

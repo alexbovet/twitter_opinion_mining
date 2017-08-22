@@ -3,7 +3,7 @@ __author__ = "Alexandre Bovet"
 
 import numpy as np
 import pandas as pd
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 from functools import partial
 import time
 
@@ -71,9 +71,9 @@ def get_num_users(group, r_threshold=0.5, parallel=True):
         else:
             return pd.Series(data=data)
             
-from ds import DS
+from baseModule import baseModule
 
-class analyzeProbaDF(DS):
+class analyzeProbaDF(baseModule):
     """ analyze classification probability dataframe
         returns number of tweets and users per day for each camp
     """
@@ -90,7 +90,7 @@ class analyzeProbaDF(DS):
         # OPTIONAL PARAMETERS
         #==============================================================================
         propa_col_name = self.job.get('propa_col_name', 'p_1')
-        ncpu = self.job.get('ncpu', 6)
+        ncpu = self.job.get('ncpu', cpu_count()-1)
         resampling_frequency = self.job.get('resampling_frequency', 'D') # day
         # threshold for the classifier probability
         threshold = self.job.get('threshold',0.5)

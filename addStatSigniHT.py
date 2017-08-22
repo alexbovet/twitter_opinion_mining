@@ -3,6 +3,7 @@ __author__ = "Alexandre Bovet"
 import graph_tool.all as gt
 import time
 from HTCoocNetwork import add_p_val_to_edges
+from multiprocessing import cpu_count
 
 from baseModule import baseModule
 
@@ -22,7 +23,7 @@ class addStatSigniHT(baseModule):
         # OPTIONAL PARAMETERS
         #==============================================================================
         # set the number of cores
-        ncpu = self.job.get('ncpu', 6)
+        ncpu = self.job.get('ncpu', cpu_count()-1)
         
         G = gt.load_graph(graph_file)
         
