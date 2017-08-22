@@ -4,9 +4,9 @@ __author__ = "Alexandre Bovet"
 import sqlite3
 from TwSqliteDB import addHTSupportGroup
 
-from ds import DS
+from baseModule import baseModule
 
-class updateHTGroups(DS):
+class updateHTGroups(baseModule):
     """ add a column to the sqlite db hashtag_tweet_user table to indicate
         hashtags selected by label propagation.
         
