@@ -5,6 +5,16 @@ import pandas as pd
 
 from baseModule import baseModule
 
+def run_from_ipython():
+    try:
+        __IPYTHON__
+        return True
+    except NameError:
+        return False
+
+if run_from_ipython():
+    from IPython.display import display    
+    
 class selectHashtags(baseModule):
     """ filter the hashtags according to occurences and label propagations
         
@@ -32,6 +42,9 @@ class selectHashtags(baseModule):
         # print hashtag list
         ##########################
         
+        # set option to print dataframes without wraping rows
+        pd.set_option('expand_frame_repr', False)
+        
         # find how many camps there are
         camps = df_prop.label_init.unique()
         camps = camps[camps > 0]
@@ -51,23 +64,15 @@ class selectHashtags(baseModule):
                                   
             
             print('\n +++ hashtags in camp ' + str(camp))
-            print(df_prop.loc[mask].sort_values('count',
+            if run_from_ipython():
+                
+                display(df_prop.loc[mask].sort_values('count',
+                                    ascending=False).head(num_top_htgs))
+            else:
+                print(df_prop.loc[mask].sort_values('count',
                                     ascending=False).head(num_top_htgs))
             
-#            #########################
-#            # Here is where user should select which hashtags he wants to keep
-#            # or remove
-#            #########################
-#            
-#            # no selections, just take all of them
-#            
-#            # old htgs
-#            ht_list = df_prop.loc[df_prop.label_init == camp]['name'].tolist()
-#            # + new htgs
-#            ht_list.extend(df_prop.loc[mask].sort_values('count',
-#                                      ascending=False)['name'].head(num_top_htgs).tolist())
-#            
-#            htgs_lists.append(ht_list)
+            
 
         
 
