@@ -44,6 +44,7 @@ class selectHashtags(baseModule):
         
         # set option to print dataframes without wraping rows
         pd.set_option('expand_frame_repr', False)
+        pd.set_option('display.max_rows', num_top_htgs)
         
         # find how many camps there are
         camps = df_prop.label_init.unique()
