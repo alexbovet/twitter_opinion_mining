@@ -101,27 +101,27 @@ class makeHTNetwork(baseModule):
         
         print('creating graph')
         t0 = time.time()
-        G = gt.Graph(directed=False)
+        self.G = gt.Graph(directed=False)
         
-        e_weights = G.new_edge_property('int') 
+        e_weights = self.G.new_edge_property('int') 
         
-        G.vp['names'] = G.add_edge_list(edges_list_weigths, hashed=True, 
+        self.G.vp['names'] = self.G.add_edge_list(edges_list_weigths, hashed=True, 
                                             string_vals=True, eprops=e_weights)
         
         e_weights.a = edges_list_weigths[:,2]
         
-        G.ep['weights'] = e_weights
+        self.G.ep['weights'] = e_weights
         
-        ht_names = G.vp.names.get_2d_array([0])
+        ht_names = self.G.vp.names.get_2d_array([0])
         
-        G.graph_properties['Ntweets'] = G.new_graph_property('int')
-        G.graph_properties['Ntweets'] = df.tweet_id.unique().size
-        G.graph_properties['start_date'] = G.new_graph_property('object')
-        G.graph_properties['start_date'] = start_date
-        G.graph_properties['stop_date'] = G.new_graph_property('object')
-        G.graph_properties['stop_date'] = stop_date
-        G.graph_properties['weight_threshold'] = G.new_graph_property('int')
-        G.graph_properties['weight_threshold'] = weight_threshold
+        self.G.graph_properties['Ntweets'] = self.G.new_graph_property('int')
+        self.G.graph_properties['Ntweets'] = df.tweet_id.unique().size
+        self.G.graph_properties['start_date'] = self.G.new_graph_property('object')
+        self.G.graph_properties['start_date'] = start_date
+        self.G.graph_properties['stop_date'] = self.G.new_graph_property('object')
+        self.G.graph_properties['stop_date'] = stop_date
+        self.G.graph_properties['weight_threshold'] = self.G.new_graph_property('int')
+        self.G.graph_properties['weight_threshold'] = weight_threshold
         
         self.print_elapsed_time(t0)
         
@@ -138,16 +138,18 @@ class makeHTNetwork(baseModule):
         
         
         #add counts to Graph vertex
-        v_counts = G.new_vertex_property('int', val=0)
+        v_counts = self.G.new_vertex_property('int', val=0)
         ht_counts_names = np.array(df_ht_counts.hashtag.tolist())
         sorter = np.argsort(ht_counts_names)
         v_counts.a = df_ht_counts.iloc[sorter[np.searchsorted(ht_counts_names, 
                                              ht_names, sorter=sorter)]]['count']
-        G.vp['counts'] = v_counts
+        self.G.vp['counts'] = v_counts
         
         # save graph file
-        G.save(graph_file, fmt='graphml')
+        self.G.save(graph_file, fmt='graphml')
         
+        print('\nNumber of nodes: ' + str(self.G.num_vertices()))
+        print('Number of edges: ' + str(self.G.num_edges()))
         
         
         

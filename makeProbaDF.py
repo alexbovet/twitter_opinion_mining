@@ -165,23 +165,23 @@ class makeProbaDF(baseModule):
         df_proba_with_retweets = pd.merge(df_proba, df_tid_rtid, how='left', on='tweet_id')
         df_proba_with_retweets.fillna(-1, inplace=True)
         
-        df_proba_all = pd.merge(df_proba_with_retweets, df_proba_original_rt[['tweet_id','proba_original']], 
+        self.df_proba_all = pd.merge(df_proba_with_retweets, df_proba_original_rt[['tweet_id','proba_original']], 
                                 how='left', left_on='retweet_id', right_on='tweet_id')
         
         # copy original tweet prob to retweet prob
-        df_proba_all.loc[df_proba_all.proba_original.notnull(), propa_col_name]\
-                         = df_proba_all.loc[df_proba_all.proba_original.notnull(), 'proba_original']
-        df_proba_all = df_proba_all[['datetime_EST', 'tweet_id_x', 'user_id', propa_col_name]]
-        df_proba_all.rename(columns={'tweet_id_x': 'tweet_id'}, inplace=True)
+        self.df_proba_all.loc[self.df_proba_all.proba_original.notnull(), propa_col_name]\
+                         = self.df_proba_all.loc[self.df_proba_all.proba_original.notnull(), 'proba_original']
+        self.df_proba_all = self.df_proba_all[['datetime_EST', 'tweet_id_x', 'user_id', propa_col_name]]
+        self.df_proba_all.rename(columns={'tweet_id_x': 'tweet_id'}, inplace=True)
                          
         #%% correct probabilites for hashtags
         
-        df_proba_all.loc[df_proba_all.tweet_id.isin(df_proba_ht_pro_1.tweet_id), propa_col_name] = 1.0
-        df_proba_all.loc[df_proba_all.tweet_id.isin(df_proba_ht_pro_0.tweet_id), propa_col_name] = 0.0
+        self.df_proba_all.loc[self.df_proba_all.tweet_id.isin(df_proba_ht_pro_1.tweet_id), propa_col_name] = 1.0
+        self.df_proba_all.loc[self.df_proba_all.tweet_id.isin(df_proba_ht_pro_0.tweet_id), propa_col_name] = 0.0
 
         #save                             
         print('saving corrected dataframe')
-        df_proba_all.to_pickle(df_proba_filename)
+        self.df_proba_all.to_pickle(df_proba_filename)
         print('done')
         self.print_elapsed_time(t0)
                          

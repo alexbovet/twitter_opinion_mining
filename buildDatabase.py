@@ -179,6 +179,16 @@ class buildDatabse(baseModule):
                 conn.commit()
                 
                 print('time ' + "{:.6}".format(time.time()-t2) + 's')
+                
+        # counting total number of tweets
+        with sqlite3.connect(sqlite_db_filename, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES) as conn:
+            c = conn.cursor()
+            
+            c.execute("SELECT COUNT(*) FROM tweet")
+            
+            print("\nNumber of tweets: " + str(c.fetchall()))
+                
+            
         
     
 

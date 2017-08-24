@@ -95,11 +95,11 @@ class propagateLabels(baseModule):
         
         # propagate
         print('Propagating labels')
-        df_prop = propagates_labels(G_final, init_label_vp='label_init')
+        self.df_prop = propagates_labels(G_final, init_label_vp='label_init')
         
         #save results
         print('saving results')
-        df_prop.to_pickle(propag_results_filename)
+        self.df_prop.to_pickle(propag_results_filename)
         
         
         

@@ -38,14 +38,16 @@ class selectInitialHashtags(baseModule):
         ht_names = G.vp.names.get_2d_array([0])
         counts = G.vp.counts.a
         
-        ht_names_counts = sorted([(str(htn), int(htc)) for htn, htc in zip(ht_names, counts)],
+        self.ht_names_counts = sorted([(str(htn), int(htc)) for htn, htc in zip(ht_names, counts)],
                                   key=lambda x:x[1], reverse=True)
         
         print(" Top " + str(num_top_htgs) + " occuring hashtags:")
         print("* rank: (name: frequency)")
         
-        for i,hnc in enumerate(ht_names_counts[:num_top_htgs]):
+        for i,hnc in enumerate(self.ht_names_counts[:num_top_htgs]):
             print(str(i) + ' :' + str(hnc))
+            
+        
                                    
         
         

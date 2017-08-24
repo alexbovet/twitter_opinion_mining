@@ -13,6 +13,16 @@ def applyParallel(dfGrouped, func, ncpu):
     return pd.concat(ret_list)
 
 
+def run_from_ipython():
+    try:
+        __IPYTHON__
+        return True
+    except NameError:
+        return False
+
+if run_from_ipython():
+    from IPython.display import display    
+
 # aggregating functions: used on tweets grouped by day
 def get_num_tweets(group, parallel=True):
     """ returns the number of tweets in each camp in group """
@@ -126,7 +136,10 @@ class analyzeProbaDF(baseModule):
 
         print('loading ' + df_proba_filename)
         df = pd.read_pickle(df_proba_filename)
-
+        
+        # display settings for pandas
+        pd.set_option('expand_frame_repr', False)
+        pd.set_option('display.max_rows', None)
         
         #% filter dataframe according to threshold
         df_filt = df.drop(df.loc[np.all([df[propa_col_name] <= threshold, df[propa_col_name] >= 1-threshold], axis=0)].index)
@@ -150,26 +163,41 @@ class analyzeProbaDF(baseModule):
         t0 = time.time()
         
         if parallel:
-            df_num_tweets = applyParallel(resample, get_num_tweets_u, ncpu)            
-            df_num_users = applyParallel(resample, get_num_users_u, ncpu)
+            self.df_num_tweets = applyParallel(resample, get_num_tweets_u, ncpu)            
+            self.df_num_users = applyParallel(resample, get_num_users_u, ncpu)
             
         else:
-            df_num_tweets = resample.apply(get_num_tweets_u)
-            df_num_users = resample.apply(get_num_users_u)
+            self.df_num_tweets = resample.apply(get_num_tweets_u)
+            self.df_num_users = resample.apply(get_num_users_u)
 
         #%% save dataframes            
-        df_num_tweets.to_pickle(df_num_tweets_filename)    
-        df_num_users.to_pickle(df_num_users_filename)
+        self.df_num_tweets.to_pickle(df_num_tweets_filename)    
+        self.df_num_users.to_pickle(df_num_users_filename)
         
         print('finished')
         print(time.time() - t0)
         
         self.string_results = "\nNumber of tweets per day in each camp:\n"+\
-                                df_num_tweets.to_string() + \
+                                self.df_num_tweets.to_string() + \
                                 "\nNumber of users per day in each camp:\n"+\
-                                df_num_users.to_string()
+                                self.df_num_users.to_string()
         
-        print(self.string_results)
+        if run_from_ipython():
+            print('\nNumber of tweets per day in each camp:')
+            display(self.df_num_tweets)
+        
+            print('\nNumber of users per day in each camp:')
+            display(self.df_num_users)
+            
+        else:
+            print('\nNumber of tweets per day in each camp:')
+            print(self.df_num_tweets.to_string())
+        
+            print('\nNumber of users per day in each camp:')
+            display(self.df_num_users.to_string())
+            
+        
+        
         
             
             

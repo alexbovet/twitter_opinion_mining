@@ -104,11 +104,11 @@ class trainClassifier(baseModule):
         
         self.print_elapsed_time(t0) 
                                                      
-        to_dump = {'sklearn_pipeline' : pipeline,
+        self.to_dump = {'sklearn_pipeline' : pipeline,
                    'label_mapper' : label_mapper,
                    'label_inv_mapper' : label_inv_mapper}
         
-        joblib.dump(to_dump, classifier_filename)
+        joblib.dump(self.to_dump, classifier_filename)
         
 
         

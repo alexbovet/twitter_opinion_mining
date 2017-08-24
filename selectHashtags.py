@@ -64,8 +64,10 @@ class selectHashtags(baseModule):
         
         signi_cols = [col for col in df_prop.columns if col[:5] == 'signi']
         
-#        # list of lists with the selected hashtags
-#        htgs_lists = []
+
+        # 
+        self.hashtags_per_camps = dict()
+        
         for camp in camps:
             # find htgs where signi_sum_i > sum_(j!=i) signi_sum_j and that are new
 #            mask = np.logical_and(2*df_prop['signi_sum' + str(camp)] > df_prop[signi_cols].sum(axis=1),
@@ -84,6 +86,10 @@ class selectHashtags(baseModule):
             else:
                 print(df_prop.loc[mask].sort_values('count',
                                     ascending=False).head(num_top_htgs))
+                
+            # add hashtags to dictionary
+            self.hashtags_per_camps[camp] = df_prop.loc[mask].sort_values('count',
+                                    ascending=False).head(num_top_htgs).name.tolist()
             
             
 

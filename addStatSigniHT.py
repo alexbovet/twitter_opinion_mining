@@ -42,16 +42,16 @@ class addStatSigniHT(baseModule):
         # set the number of cores
         ncpu = self.job.get('ncpu', cpu_count()-1)
         
-        G = gt.load_graph(graph_file)
+        self.G = gt.load_graph(graph_file)
         
         t0 = time.time()
         print('computing significance of links')
-        add_p_val_to_edges(G, G.gp.Ntweets, ncpu=ncpu)
+        add_p_val_to_edges(self.G, self.G.gp.Ntweets, ncpu=ncpu)
         print('finished')
         self.print_elapsed_time(t0)
         
         # save graph file
-        G.save(graph_file, fmt='graphml')
+        self.G.save(graph_file, fmt='graphml')
                 
         
         
