@@ -16,11 +16,23 @@ if run_from_ipython():
     from IPython.display import display    
     
 class selectHashtags(baseModule):
-    """ filter the hashtags according to occurences and label propagations
+    r"""Vizualize the result of the label propagation through the hashtag co-occurrences network.
+    
+        Must be initialized with a dictionary `job` containing the key `propag_results_filename`
         
-        Loads the results of labelPropagation and returns a list of hashtags lists
-        that can be fed back to labelPropagation
+        Visualization of the results using `selectHashtags`, and updating the 
+        `htgs_lists` list. This will print a list of hashtags, :math:`i`, for each camp 
+        :math:`C_k` satisfying 
         
+        .. math::
+            \sum_{j \in C_k} s_{ij} > \sum_{j \notin C_k} s_{ij}
+        
+        where :math:`\{i : i \notin C_k \}` represents all the other camps than :math:`C_k`.
+        
+        *Optional parameters that can be added to `job`:*
+        
+        :num_top_htgs: number of top hashtags to be displayed in each camp.
+                       (Default is 100).
     """    
     
     def run(self):

@@ -17,7 +17,31 @@ from TwSentiment import official_twitter_clients
 from baseModule import baseModule
 
 class buildTrainingSet(baseModule):
-    """ build Training Set from sqlite db using hashtag labels 
+    """ Create the tweet training set from the labeled hashtags.
+    
+        Must be initialized with a dictionary `job` containing keys `sqlite_db_filename`,
+        `features_pickle_file` and `labels_pickle_file`, `features_vect_file`,
+        `labels_pickle_file`, `features_vect_file`, `labels_vect_file` and 
+        `labels_mappers_file`.
+        
+        `buildTrainingSet` reads tweets from the database with hashtags marked above,
+        extract the features and labels of each tweets and saves them in 
+        `features_pickle_file` and `labels_pickle_file`, respectively.
+        Vectorized versions of the features and labels are saved to `features_vect_file` 
+        and `labels_vect_file` for the cross-validation. A mapper between label names
+        and label number is saved to `labels_mappers_file`.
+        
+        *Optional parameters:*
+        
+        :column_name_ht_group: If the optional parameter `column_name_ht_group` 
+                               has been changed in `job` in the step before, 
+                               it will be used here to select the corresponding hashtag 
+                               lists.
+        :undersample_maj_class: whether to undersample the majority class in order
+                                 to balance the training set. Default is True, if False, unbalanced training 
+                                 set will be used and class weight will be adjusted accrodingly during training.
+         
+        see http://scikit-learn.org/0.18/modules/generated/sklearn.linear_model.SGDClassifier.html
         
     """
     

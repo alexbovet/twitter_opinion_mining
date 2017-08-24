@@ -89,12 +89,10 @@ job = {'tweet_archive_dirs': tweet_archive_dirs,
 raise Exception
 
 #%% build database
-# Read the tweets from all the .taj files in the directories tweet_archive_dirs
-# and add them to the database sqlite_db_filename.
+# Read the tweets from all the .taj files in the directories `tweet_archive_dirs`
+# and add them to the database `sqlite_db_filename`.
 
-bDB = buildDatabse(job)
-
-bDB.run()
+buildDatabse(job).run()
 
 #%% make HT network
 # Reads all the co-occurences from the SQLite database and builds the network 
@@ -150,7 +148,7 @@ selectInitialHashtags(job).run()
 # select the seeds you want to use for the label propagation
 # user input
 job['initial_htgs_lists'] = [['mortgage'],
-                      ['etrade']]
+                             ['etrade']]
                       
 
 #%% propagate labels

@@ -74,10 +74,32 @@ def get_num_users(group, r_threshold=0.5, parallel=True):
 from baseModule import baseModule
 
 class analyzeProbaDF(baseModule):
-    """ analyze classification probability dataframe
-        returns number of tweets and users per day for each camp
-    """
+    """ Computes the number of tweets and the number of users in each camp per day.
     
+        Must be initialized with a dictionary `job` containing keys `df_proba_filename`,
+        `df_num_tweets_filename` and `df_num_users_filename`.
+        
+        `analyzeProbaDF` reads `df_proba_filename` and returns the number of tweets 
+        and the number of users in each camp per day. The results are displayed and 
+        saved as pandas dataframes to `df_num_tweets_filename` and `df_num_users_filename`.
+
+        *Optional parameters:*
+
+        :ncpu: number of cores to use. Default is number of cores of the machine 
+               minus one.
+        :resampling_frequency: frequency at which tweets are grouped. 
+                               Default is `'D'`, i.e. daily. (see [1] for
+                               different possibilities.)
+        :threshold: threshold for the classifier probability (threshold >= 0.5).
+                    Tweets with p > threshold are classified in camp2 and tweets with 
+                    p < 1-threshold are classified in camp1. Default is 0.5.
+        :r_threshold: threshold for the ratio of classified tweets needed to 
+                      classify a user. Default is 0.5.
+    
+    
+        [1] http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases
+    
+    """
     def run(self):
         #==============================================================================
         # PARAMETERS

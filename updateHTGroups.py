@@ -8,8 +8,19 @@ import time
 from baseModule import baseModule
 
 class updateHTGroups(baseModule):
-    """ add a column to the sqlite db hashtag_tweet_user table to indicate
-        hashtags selected by label propagation.
+    """ Mark the hashtags used as labels in the database.
+     
+        Must be initialized with a dictionary `job` containing keys
+        `sqlite_db_filename` and `htgs_lists`.
+        
+        `updateHTGroups` takes the lists of hashtags `htgs_lists` and mark then in 
+        the database `sqlite_db_filename`.
+
+        *Optional parameters that can be added to `job`:*
+ 
+        :column_name_ht_group: name of the column added to the database (Default 
+                               is `'ht_class'`). Different names can be used to
+                               test different `htgs_list`.
         
     """    
     
@@ -47,12 +58,15 @@ class updateHTGroups(baseModule):
         if column_name in [cname for _, cname, _, _, _ ,_ in cnames]:
             print('column ' + str(column_name) + ' already exists, column values will be replaced.')
             create_column = False
+            # first drop index
+            c.execute("DROP INDEX IF EXISTS {cname}_supp_index".format(cname=column_name))
+            conn.commit()
             # set all column values to NULL
             with sqlite3.connect(sqlite_file, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES) as conn:
                 c = conn.cursor()
                 c.execute("""UPDATE hashtag_tweet_user
                               SET {cname} = NULL 
-                              WHERE {cname} IS NOT NULL""".format(cname=column_name))
+                              """.format(cname=column_name))
         
             
         #%%

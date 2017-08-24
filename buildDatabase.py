@@ -10,10 +10,19 @@ import sqlite3
 from baseModule import baseModule
 
 class buildDatabse(baseModule):
-    """ used to build a new sqlite database or update an existing one
+    """ Creates or updates the SQLite database with the tweet informations.
+        
+        buildDatabse must be initialized with a dictionary containing keys 
+        `tweet_archive_dirs` and `sqlite_db_filename`.
+        
+        Read the tweets from the .taj files located in the directories 
+        listed in `tweet_archive_dirs` and add them to the database 
+        `sqlite_db_filename`. If the database already exists, it 
+        will be updated with new tweets.
     """
     
     def run(self):
+        
         #==============================================================================
         # PARAMETERS
         #==============================================================================

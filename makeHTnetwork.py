@@ -11,7 +11,33 @@ from collections import Counter
 from baseModule import baseModule
 
 class makeHTNetwork(baseModule):
-    """ build a HT coocurence network
+    """ Builds the network of hashtag co-occurrences.
+    
+        Must be initialized with a dictionary `job` containing keys `sqlite_db_filename`
+        and `graph_file`.
+    
+        Reads all the co-occurences from the SQLite database and builds the network 
+        of where nodes are hashtags and edges are co-occurrences. 
+        The graph is a graph-tool object and is saved in graphml format to graph_file.
+        Nodes of the graph have two properties: `counts` is the number of single 
+        occurrences of the hashtag and `name` is the name of the hashtag.
+        Edges have a property `weights` equal to the number of co-occurrences they represent.
+        
+        The graph has the following properties saved with it:
+         - `Ntweets`: number of tweets with at least one hashtag used to build the graph.
+         - `start_date` : date of the first tweet.
+         - `stop_date` : date of the last tweet.
+         - `weight_threshold` : co-occurrence threshold. Edges with less than `weight_threshold` co-occurrences are discarded.
+        
+         *Optional parameters that can be added to `job`:*
+         
+         :start_date: and
+         :stop_date: to specify a time range for the tweets. (Default is `None`,
+                     i.e. select all the tweets in the database).
+         :weight_threshold: is the minimum number of co-occurences between to 
+                            hashtag to be included in the graph. (Default is 3).
+        
+
     """    
     
     def run(self):

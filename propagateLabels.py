@@ -7,7 +7,25 @@ from HTCoocNetwork import propagates_labels, find_vertices_from_hashtags
 from baseModule import baseModule
 
 class propagateLabels(baseModule):
-    """ propagate the labels to neighbors
+    """ Propagate the labels of hashtags along the hashtag co-occurrence networtk.
+        
+        Must be initialized with a dictionary `job` containing keys `graph_file`,
+        `htgs_lists` and `propag_results_filename`.
+        
+        `propagateLabels` uses the graph from `graph_file` and the initial hashtags 
+        from `htgs_lists` to propagate their labels to their neighbors taking into 
+        account the statistical significance of edges. The results are saved in a 
+        pandas DataFrame in `propag_results_filename`.
+        
+        *Optional parameters that can be added to `job`:*
+            
+        :count_ratio: threshold, :math:`r`, for removing hashtags with a number
+                      of single occurrences smaller than :math:`r \max\limits_{v_j\in C_k} c_j`
+                      where :math:`c_i` is the number of occurrences of the hashtag associated
+                      with vertex :math:`v_i`, :math:`C_k` is the class to which :math:`v_i` belong. 
+                      (Default = 0.001).
+        :p0: significance threshold. to keep only edges with p_val <= p0. 
+             (Default = 1e-5).
     """    
     
     def run(self):

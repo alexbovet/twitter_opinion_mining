@@ -14,7 +14,43 @@ from multiprocessing import cpu_count
 from baseModule import baseModule
 
 class crossValOptimize(baseModule):
-    """ optimize classifier hyper parameters
+    """ Cross-validation of the classifier.
+    
+        Must be initialized with a dictionary `job` containing keys `features_vect_file`,
+        `labels_vect_file` and `best_params_file`.
+        
+        Estimate the performance of the classifier and optimize classifier parameters 
+        with cross-validation. `crossValOptimize` loads the vectorized features and 
+        labels (`features_vect_file` and `labels_vect_file`) and saves the results 
+        of the optimization to `best_params_file` in JSON format.
+
+        *Optional parameters:*
+        :undersample_maj_class: if `undersample_maj_class` was set to `False` 
+                                when building the training set,
+                                class weights will be adjusted to take into 
+                                account different sizes of classes.
+        :ncpu: number of cores to use (default is the number of cpus on your 
+               machine minus one).
+        :scoring: The score used to optimize (default is `'f1_micro'`). 
+        :n_splits: number of folds (default is 10).
+        :loss: loss function to be used. Default is `'log'` for Logistic Regression.
+        :penalty: penalty of the regularization term (default is `'l2`).
+        :n_iter: number of iterations of the gradient descent algorithm. 
+                 Default is `5e5/(number of training samples)`. 
+        :grid_search_parameters: parameter space to explore during the 
+                                 cross-validation. Default is 
+                                 `{'classifier__alpha' : np.logspace(-1,-7, num=20)}`,
+                                 i.e. optimizing the 
+                                 regularization strength (`alpha`) between 1e-1 and 1e-7 
+                                 with 20 logarithmically spaced steps.
+        :verbose: verbosity level of the calssifier (default is 1).
+
+        See the sklearn Stochastic Gradient Descent user guide 
+        (http://scikit-learn.org/0.18/modules/sgd.html#sgd) for recommended settings,
+        the GridSearchCV (http://scikit-learn.org/0.18/modules/generated/sklearn.model_selection.GridSearchCV.html)
+        and the Stochastic Gradient Descent documentations 
+        (http://scikit-learn.org/0.18/modules/sgd.html#sgd) for details.
+                
         
     """
     
@@ -86,7 +122,7 @@ class crossValOptimize(baseModule):
         #
         # Auto Grid Search
         #
-        grid_search = GridSearchCV(estimator=pipeline, param_grid=grid_search_parameters, cv=kfold,
+        self.grid_search = GridSearchCV(estimator=pipeline, param_grid=grid_search_parameters, cv=kfold,
                                    scoring=scoring, verbose=0 , n_jobs=ncpu)
         
         print("\nPerforming grid search...")
@@ -94,13 +130,13 @@ class crossValOptimize(baseModule):
         print("parameters:")
         print(grid_search_parameters)
         t0 = time.time()
-        grid_search.fit(X, y)
+        self.grid_search.fit(X, y)
         
         self.print_elapsed_time(t0)
     
-        print("\nBest score: %0.3f" % grid_search.best_score_)
+        print("\nBest score: %0.3f" % self.grid_search.best_score_)
         print("Best parameters set:")
-        best_parameters_np = grid_search.best_estimator_.get_params()
+        best_parameters_np = self.grid_search.best_estimator_.get_params()
         
         # prepare dictionary with best parameters default values
         self.best_parameters = {'classifier__loss': loss, 'classifier__penalty': penalty,

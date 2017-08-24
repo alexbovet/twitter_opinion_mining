@@ -8,11 +8,32 @@ from TwSentiment import official_twitter_clients
 from baseModule import baseModule
 
 class makeProbaDF(baseModule):
-    """ prepare a pandas dataframe with the classification probability, tweet_id and user_id
-        for each tweets.
-        - Use the probability of the original tweets for retweets
-        - Set the probability of tweets with labeled hashtags to 0 or 1
-        - Filter out tweets sent from unofficial Twitter clients
+    """ Processes the classification results and writes them to a dataframe.
+        
+        Must be initialized with a dictionary `job` containing keys `sqlite_db_filename`
+        and `df_proba_filename.
+        
+        `makeProbaDF` reads the classification results from the database and processes 
+        them to:
+            
+        - Replace the classification probability of retweets with the classification
+          results of the original tweets.
+        - Replace the classification probability of tweets having a hashtag of one of
+          the two camps (and not of the other camp) with 0 (for camp1) or 1 (for camp2).
+        - Discard tweets emanating from unoffical Twitter clients.
+         
+        The results are saved as a pandas dataframe in `df_proba_filename`.
+         
+        *Optional parameters:*
+         
+        :use_official_clients: whether you want to keep only tweets from official 
+                                clients (`True`) or all tweets (`False`).
+                                Default is `True`.
+        :propa_table_name_suffix: can be changed to use the classification of 
+                                   different classifiers if it was used with 
+                                   `classifyTweets`.
+        :column_name_ht_group: is also used if it was changed to create a different 
+                                training set.
     """
     
     def run(self):

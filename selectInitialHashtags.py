@@ -5,8 +5,13 @@ import graph_tool.all as gt
 from baseModule import baseModule
 
 class selectInitialHashtags(baseModule):
-    """ Select the initial set of hashtags
+    """ Displays the top occurring hashtags.
         
+        Must be initialized with a dictionary `job` containing the key `graph_file`.
+         
+        *Optional parameters that can be added to job:*
+         
+        :num_top_htgs: number of top hashtags to display (Default is 100).
     """    
     
     def run(self):

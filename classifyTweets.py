@@ -16,8 +16,19 @@ import numpy as np
 from baseModule import baseModule
 
 class classifyTweets(baseModule):
-    """ adds a table to the sqlite database with the 
-        probability of classification for each tweets        
+    """ Classify each tweets and updates the SQLite database with the results.
+    
+        Must be initialized with a dictionary `job` containing keys `sqlite_db_filename`
+        and  `classifier_filename`.
+        
+        Adds two tables `class_proba` and `retweet_class_proba` to the SQLite database
+        with the result of the classification of each tweets and original retweeted status.
+
+        *Optional parameters:*
+        
+        :propa_table_name_suffix: add a suffix to the created table names in order to
+                                  compare different classifiers.
+                                  Default is '' (empty string).
     """
     
     def run(self):

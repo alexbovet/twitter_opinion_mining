@@ -14,8 +14,15 @@ import ujson as json
 from baseModule import baseModule
 
 class trainClassifier(baseModule):
-    """ train classifier
+    """ Train a classifier on the training set using the best parameters.
         
+        Must be initialized with a dictionary `job` containing keys `features_pickle_file`,
+        `labels_pickle_file`, `best_params_file`, `labels_mappers_file` and
+        `classifier_filename`.
+        
+        Uses features and labels from `features_pickle_file` and `labels_pickle_file`
+        to train the classifier using the parameters from `best_params_file`.
+        The trained classifier is then saved to `classifier_filename`.
     """
     
     def run(self):
