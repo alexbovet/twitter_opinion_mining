@@ -1,6 +1,7 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-__author__ = "Alexandre Bovet"
+
+# Author: Alexandre Bovet <alexandre.bovet@gmail.com>
+# License: BSD 3 clause
 
 """
 functions related to thh hashtag cooccurence network
