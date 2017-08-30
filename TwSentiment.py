@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Apr  8 11:45:26 2016
+""" Sentiment Analysis of tweets """
 
-@author: Alexandre Bovet <alexandre.bovet@gmail.com>
-
-Sentiment Analysis of tweets
-"""
+# Author: Alexandre Bovet <alexandre.bovet@gmail.com>
+# License: BSD 3 clause
 
 
 from nltk.corpus import stopwords
@@ -316,44 +313,6 @@ def classifyText(text, classifier, tokenizer=CustomTweetTokenizer(),
     return predicted_label, proba
 
 
-#==============================================================================
-# Emoticon classification
-#==============================================================================
-
-POS_EMOTICONS = [":D", ":-D", ":-)", ":=)", "=)", "XD", "=D", "=]", ":]", ":<)",
-                 ":>)", "=}", ":)",":}", ":o)", "(=", "[:", "8D","8-)",
-                 "(:", "(-:", ":')", ":-3", ":]", ":-}", ":-]",":-.)","^_^", "^-^"]
-
-NEG_EMOTICONS = [":(", ":-(", ":'(", "=(", "={", "):", ")':", ")=", "}=",
-                ":-{", ":-{", ":-(", ":'{", "=[", ":["]
-                
-POS_EMOJIS_RE = re.compile(u'['
-                         u'\U0001F600-\U0001F606'
-                         u'\U0001F60A-\U0001F60E'
-                         u'\U0001F638-\U0001F63B]+', 
-                         re.UNICODE)
-
-NEG_EMOJIS_RE = re.compile(u'['
-                        u'\U0001F61E-\U0001F622'
-                        u'\U0001F63E-\U0001F63F]+', 
-                        re.UNICODE)
-                        
-def classifyEmoticons(text):
-    
-    # find all emoticons
-    emoticons = EMOTICON_RE.findall(text)
-    
-    pos = any([emo in POS_EMOTICONS for emo in emoticons]) or bool(POS_EMOJIS_RE.search(text))
-    neg = any([emo in NEG_EMOTICONS for emo in emoticons]) or bool(NEG_EMOJIS_RE.search(text))
-
-    if pos and neg:
-        return 'N/A'
-    elif pos and not neg:
-        return 'pos'
-    elif neg and not pos:
-        return 'neg'
-    elif not pos and not neg:
-        return None
 
 # list of official Twitter Clients (should be updated regularly)
 official_twitter_clients = ['Twitter for iPhone',
