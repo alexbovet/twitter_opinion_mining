@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Jun 24 16:30:00 2016
+""" create sqlite databases for tweets """
 
-@author: Alexandre Bovet <alexandre.bovet@gmail.com>
+# Author: Alexandre Bovet <alexandre.bovet@gmail.com>
+# License: BSD 3 clause
 
-create sqlite databases for tweets
-
-"""
 import os
 import time
 import sqlite3
