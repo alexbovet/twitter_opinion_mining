@@ -1,6 +1,10 @@
 """
 	Base class for modules
 """
+
+# Author: Alexandre Bovet <alexandre.bovet@gmail.com>
+# License: BSD 3 clause
+
 import time
 
 class baseModule():

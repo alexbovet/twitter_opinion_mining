@@ -1,4 +1,5 @@
-__author__ = "Alexandre Bovet"
+# Author: Alexandre Bovet <alexandre.bovet@gmail.com>
+# License: BSD 3 clause
 
 import numpy as np
 import pandas as pd

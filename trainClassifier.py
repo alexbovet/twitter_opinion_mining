@@ -1,5 +1,5 @@
-__author__ = "Alexandre Bovet"
-
+# Author: Alexandre Bovet <alexandre.bovet@gmail.com>
+# License: BSD 3 clause
 
 from sklearn.linear_model import SGDClassifier
 from sklearn.pipeline import Pipeline
