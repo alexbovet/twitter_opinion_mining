@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Jun 24 16:30:00 2016
+""" Tweet classification """
 
-@author: Alexandre Bovet <alexandre.bovet@gmail.com>
+# Author: Alexandre Bovet <alexandre.bovet@gmail.com>
+# License: BSD 3 clause
 
-Tweet classification
-"""
 
 from TwSentiment import CustomTweetTokenizer, bag_of_words_and_bigrams
 import numpy as np
