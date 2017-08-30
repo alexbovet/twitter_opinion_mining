@@ -1,8 +1,8 @@
-'''
-Created on Oct 21, 2015
 
-@author: geofurb
-'''
+# Authors: Alexandre Bovet <alexandre.bovet@gmail.com>, George Furbish <geofurb@gmail.com>
+
+# License: BSD 3 clause
+
 from datetime import datetime
 import pytz
 import json
