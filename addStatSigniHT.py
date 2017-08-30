@@ -1,4 +1,5 @@
-__author__ = "Alexandre Bovet"
+# Author: Alexandre Bovet <alexandre.bovet@gmail.com>
+# License: BSD 3 clause
 
 import graph_tool.all as gt
 import time
