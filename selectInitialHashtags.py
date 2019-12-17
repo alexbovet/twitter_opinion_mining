@@ -36,7 +36,7 @@ class selectInitialHashtags(baseModule):
 
         G = gt.load_graph(graph_file)
         # array with hashtags names
-        ht_names = G.vp.names.get_2d_array([0])
+        ht_names = G.vp.names.get_2d_array([0])[0]
         counts = G.vp.counts.a
         
         self.ht_names_counts = sorted([(str(htn), int(htc)) for htn, htc in zip(ht_names, counts)],

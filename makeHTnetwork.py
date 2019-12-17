@@ -131,11 +131,14 @@ class makeHTNetwork(baseModule):
         count_group = df.groupby('hashtag')
         df_ht_counts = count_group.aggregate('count')
         df_ht_counts.sort_values('tweet_id', ascending=False, inplace=True)
-        df_ht_counts.rename_axis({'tweet_id': 'count'},axis=1, inplace=True)
+        df_ht_counts.rename(columns={'tweet_id': 'count'}, inplace=True)
         
         df_ht_counts['id'] = np.arange(0, df_ht_counts.index.size)
         df_ht_counts['hashtag'] = df_ht_counts.index
         df_ht_counts = df_ht_counts[['id','hashtag','count']]
+        
+        print(df_ht_counts.columns)
+        print(df_ht_counts)
         
         
         #add counts to Graph vertex
@@ -143,7 +146,7 @@ class makeHTNetwork(baseModule):
         ht_counts_names = np.array(df_ht_counts.hashtag.tolist())
         sorter = np.argsort(ht_counts_names)
         v_counts.a = df_ht_counts.iloc[sorter[np.searchsorted(ht_counts_names, 
-                                             ht_names, sorter=sorter)]]['count']
+                                             ht_names, sorter=sorter)].flatten()]['count']
         self.G.vp['counts'] = v_counts
         
         # save graph file

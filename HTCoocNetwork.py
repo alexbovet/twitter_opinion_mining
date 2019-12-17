@@ -118,7 +118,7 @@ def propagates_labels(Graph, init_label_vp='label_init'):
     # results dataframe
     df_propag = pd.DataFrame(columns=['name', 'count',init_label_vp,'vertex_id'])
 
-    df_propag['name'] = Graph.vp.names.get_2d_array([0])
+    df_propag['name'] = Graph.vp.names.get_2d_array([0])[0]
     df_propag['count'] = Graph.vp.counts.a
     df_propag['vertex_id'] = [Graph.vertex_index[v] for v in Graph.vertices()]
     df_propag[init_label_vp] = Graph.vp[init_label_vp].a

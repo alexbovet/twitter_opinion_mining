@@ -41,7 +41,7 @@ def get_num_tweets(group, parallel=True):
         
         if parallel:
             #must return a datafram when parallel
-            return pd.DataFrame(data=data, index=[group.index[0].date()])
+            return pd.DataFrame(data=data, index=[group.datetime_EST.iloc[0].date()])
             
         else:
             return pd.Series(data=data)
@@ -78,7 +78,7 @@ def get_num_users(group, r_threshold=0.5, parallel=True):
                 'null': n_null}
                     
         if parallel:
-            return pd.DataFrame(data=data, index=[group.index[0].date()])
+            return pd.DataFrame(data=data, index=[group.datetime_EST.iloc[0].date()])
         else:
             return pd.Series(data=data)
             
@@ -148,7 +148,7 @@ class analyzeProbaDF(baseModule):
         df_filt['n_pro_0'] = df_filt[propa_col_name] < 1 - threshold
         
         # resample tweets per day
-        resample = df_filt.set_index('datetime_EST').groupby(pd.TimeGrouper(resampling_frequency))
+        resample = df_filt.groupby(pd.Grouper(key='datetime_EST',freq=resampling_frequency))
         
         print('threshold: ' + str(threshold))
         print('r_threshold: ' + str(r_threshold))
