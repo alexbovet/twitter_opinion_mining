@@ -1,6 +1,8 @@
 # twitter_opinion_mining
 Algorithm for inferring tweets opinion from hashtag co-occurence network.
 
+See the file `Twitter_opinion_mining_example_run.ipynb` for a tutorial about how to use it.
+
 See Bovet, A., Morone, F. & Makse, H. A. Validation of Twitter opinion trends with national polling aggregates: Hillary Clinton vs Donald Trump. Sci. Rep. 8, 8673 (2018).
 http://www.nature.com/articles/s41598-018-26951-y for details.
 
